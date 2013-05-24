@@ -1,0 +1,11 @@
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Goal</th>
+        <th>Sets</th>
+        <th>Reps</th>
+        <th>Videos</th>
+    </tr>
+    [[+exerplan.items]]
+</table>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model package="exerplan" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" version="1.1">
+	<object class="Assessments" table="assessments" extends="xPDOSimpleObject">
+		<field key="assessment" dbtype="text" phptype="string" null="true" />
+		<field key="created_by" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" />
+		<field key="created_for" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" />
+		<field key="created_on" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" />
+		<field key="is_hidden" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />
+
+        <aggregate alias="Assessor" class="modUser" local="user_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="Assessee" class="modUser" local="user_id" foreign="id" cardinality="one" owner="foreign" />
+
+	</object>
+	<object class="Galleries" table="galleries" extends="xPDOSimpleObject">
+		<field key="workout_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" />
+		<field key="user_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" />
+		<field key="source_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
+		<field key="mediatype_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" />
+		<field key="url" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="name" dbtype="varchar" precision="255" phptype="string" null="true" />
+		<field key="description" dbtype="text" phptype="string" null="true" />
+		<field key="data" dbtype="text" phptype="string" null="true" />
+		<field key="controller" dbtype="varchar" precision="255" phptype="string" null="true" />
+
+        <aggregate alias="GallerySources" class="GallerySources" local="source_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="Workouts" class="Workouts" local="workout_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="User" class="modUser" local="user_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="GalleryMediatypes" class="GalleryMediatypes" local="mediatype_id" foreign="id" cardinality="one" owner="foreign" />
+
+	</object>
+	<object class="GalleryMediatypes" table="gallery_mediatypes" extends="xPDOSimpleObject">
+		<field key="mediatype" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="description" dbtype="text" phptype="string" null="true" />
+		<field key="file_extensions" dbtype="varchar" precision="255" phptype="string" null="true" />
+
+        <aggregate alias="Galleries" class="Galleries" local="id" foreign="mediatype_id" cardinality="many" owner="local" />
+        <aggregate alias="GallerySources" class="GallerySources" local="id" foreign="mediatype_id" cardinality="many" owner="local" />
+
+	</object>
+	<object class="GallerySources" table="gallery_sources" extends="xPDOSimpleObject">
+		<field key="source" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="mediatype_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" />
+		<field key="description" dbtype="text" phptype="string" null="true" />
+		<field key="data" dbtype="text" phptype="string" null="true" />
+		<field key="controller" dbtype="varchar" precision="255" phptype="string" null="true" />
+
+        <composite alias="Galleries" class="Galleries" local="id" foreign="source_id" cardinality="many" owner="local" />
+        <aggregate alias="GalleryMediatypes" class="GalleryMediatypes" local="mediatype_id" foreign="id" cardinality="one" owner="foreign" />
+
+	</object>
+	<object class="Levels" table="levels" extends="xPDOSimpleObject">
+		<field key="level" dbtype="varchar" precision="50" phptype="string" null="false" />
+		<field key="description" dbtype="text" phptype="string" null="true" />
+		<field key="sort" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
+
+        <aggregate alias="Workouts" class="Workouts" local="id" foreign="level_id" cardinality="many" owner="local" />
+
+	</object>
+	<object class="UsergroupsWorkouts" table="usergroups_workouts" extends="xPDOObject">
+		<field key="usergroup_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" index="pk" />
+		<field key="workout_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" index="pk" />
+		<field key="sort" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
+
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true" type="BTREE" >
+			<column key="workout_id" length="" collation="A" null="false" />
+			<column key="usergroup_id" length="" collation="A" null="false" />
+		</index>
+
+        <aggregate alias="Workouts" class="Workouts" local="workout_id" foreign="id" cardinality="many" owner="local" />
+        <aggregate alias="UserGroup" class="modUserGroup" local="usergroup_id" foreign="id" cardinality="one" owner="foreign" />
+
+	</object>
+	<object class="UsersWorkouts" table="users_workouts" extends="xPDOObject">
+		<field key="user_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" index="pk" />
+		<field key="workout_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" index="pk" />
+		<field key="sort" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
+
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true" type="BTREE" >
+			<column key="workout_id" length="" collation="A" null="false" />
+			<column key="user_id" length="" collation="A" null="false" />
+		</index>
+
+        <aggregate alias="Workouts" class="Workouts" local="workout_id" foreign="id" cardinality="many" owner="local" />
+        <aggregate alias="User" class="modUser" local="user_id" foreign="id" cardinality="one" owner="foreign" />
+
+	</object>
+	<object class="Workouts" table="workouts" extends="xPDOSimpleObject">
+		<field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="description" dbtype="text" phptype="string" null="true" />
+		<field key="goal" dbtype="text" phptype="string" null="true" />
+		<field key="level_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" />
+		<field key="set" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="1" />
+		<field key="repetition" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="1" />
+		<field key="rest_time" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" />
+		<field key="rest_time_unit" dbtype="varchar" precision="50" phptype="string" null="true" />
+		<field key="mon" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="true" />
+		<field key="tue" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="true" />
+		<field key="wed" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="true" />
+		<field key="thu" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="true" />
+		<field key="fri" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="true" />
+		<field key="sat" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="true" />
+		<field key="sun" dbtype="tinyint" precision="1" attributes="unsigned" phptype="integer" null="true" />
+		<field key="timely_rep" dbtype="tinyint" precision="2" attributes="unsigned" phptype="integer" null="true" />
+		<field key="timely_unit" dbtype="varchar" precision="50" phptype="string" null="true" />
+		<field key="sort" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
+
+        <aggregate alias="Levels" class="Levels" local="level_id" foreign="id" cardinality="one" owner="foreign" />
+
+        <composite alias="Galleries" class="Galleries" local="id" foreign="workout_id" cardinality="many" owner="local" />
+        <composite alias="UsergroupsWorkouts" class="UsergroupsWorkouts" local="id" foreign="workout_id" cardinality="many" owner="local" />
+        <composite alias="UsersWorkouts" class="UsersWorkouts" local="id" foreign="workout_id" cardinality="many" owner="local" />
+
+	</object>
+</model>

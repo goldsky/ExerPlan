@@ -1,0 +1,3 @@
+<div>
+    [[+exerplan.items]]
+</div>
