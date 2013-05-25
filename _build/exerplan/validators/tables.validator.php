@@ -28,12 +28,23 @@
 if ($modx = & $object->xpdo) {
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
+            $modx->log(modX::LOG_LEVEL_WARN, 'validator xPDOTransport::ACTION_INSTALL');
+            $modelPath = $modx->getOption('core_path') . 'components/exerplan/model/';
+            if (!$modx->addPackage('exerplan', $modelPath, 'modx_exerplan_')) {
+                $modx->log(modX::LOG_LEVEL_WARN, 'package could not be added in validator xPDOTransport::ACTION_INSTALL');
+            } else {
+                $modx->log(modX::LOG_LEVEL_WARN, 'package was added in validator xPDOTransport::ACTION_INSTALL');
+            }
+            break;
         case xPDOTransport::ACTION_UPGRADE:
             break;
         case xPDOTransport::ACTION_UNINSTALL:
+            $modx->log(modX::LOG_LEVEL_WARN, 'validator xPDOTransport::ACTION_UNINSTALL');
             $modelPath = $modx->getOption('core_path') . 'components/exerplan/model/';
             if (!$modx->addPackage('exerplan', $modelPath, 'modx_exerplan_')) {
-                return FALSE;
+                $modx->log(modX::LOG_LEVEL_WARN, 'package could not be added in validator xPDOTransport::ACTION_UNINSTALL');
+            } else {
+                $modx->log(modX::LOG_LEVEL_WARN, 'package was added in validator xPDOTransport::ACTION_UNINSTALL');
             }
             break;
     }

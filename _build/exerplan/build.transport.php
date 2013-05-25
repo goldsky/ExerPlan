@@ -44,16 +44,16 @@ require_once realpath(MODX_CORE_PATH) . '/model/modx/modx.class.php';
 /* define sources */
 $root = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR;
 $sources = array(
-	'root' => $root,
-	'build' => BUILD_PATH,
-	'resolvers' => BUILD_PATH . 'resolvers' . DIRECTORY_SEPARATOR,
-    'validators' => BUILD_PATH . 'validators' . DIRECTORY_SEPARATOR,
-	'data' => BUILD_PATH . 'data' . DIRECTORY_SEPARATOR,
-	'properties' => realpath(BUILD_PATH . 'data/properties/') . DIRECTORY_SEPARATOR,
-	'source_core' => realpath(MODX_CORE_PATH . 'components') . DIRECTORY_SEPARATOR . PKG_NAME_LOWER,
-	'source_assets' => realpath(MODX_ASSETS_PATH . 'components') . DIRECTORY_SEPARATOR . PKG_NAME_LOWER,
-	'docs' => realpath(MODX_CORE_PATH . 'components/' . PKG_NAME_LOWER . '/docs/') . DIRECTORY_SEPARATOR,
-	'lexicon' => realpath(MODX_CORE_PATH . 'components/' . PKG_NAME_LOWER . '/lexicon/') . DIRECTORY_SEPARATOR,
+    'root' => $root,
+    'build' => BUILD_PATH,
+    'resolvers' => realpath(BUILD_PATH . 'resolvers/') . DIRECTORY_SEPARATOR,
+    'validators' => realpath(BUILD_PATH . 'validators/') . DIRECTORY_SEPARATOR,
+    'data' => realpath(BUILD_PATH . 'data') . DIRECTORY_SEPARATOR,
+    'properties' => realpath(BUILD_PATH . 'data/properties/') . DIRECTORY_SEPARATOR,
+    'source_core' => realpath(MODX_CORE_PATH . 'components') . DIRECTORY_SEPARATOR . PKG_NAME_LOWER,
+    'source_assets' => realpath(MODX_ASSETS_PATH . 'components') . DIRECTORY_SEPARATOR . PKG_NAME_LOWER,
+    'docs' => realpath(MODX_CORE_PATH . 'components/' . PKG_NAME_LOWER . '/docs/') . DIRECTORY_SEPARATOR,
+    'lexicon' => realpath(MODX_CORE_PATH . 'components/' . PKG_NAME_LOWER . '/lexicon/') . DIRECTORY_SEPARATOR,
 );
 unset($root);
 
@@ -68,170 +68,192 @@ $builder = new modPackageBuilder($modx);
 $builder->createPackage(PKG_NAME_LOWER, PKG_VERSION, PKG_RELEASE);
 $builder->registerNamespace(PKG_NAME_LOWER, false, true, '{core_path}components/' . PKG_NAME_LOWER . '/');
 
-/* create category */
+/**
+ * MENU & ACTION
+ */
+$menu = include $sources['data'] . 'transport.menu.php';
+if (empty($menu)) {
+    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in menu.');
+} else {
+    $modx->log(modX::LOG_LEVEL_INFO, 'Packaging in menu...');
+    $menuVehicle = $builder->createVehicle($menu, array(
+        xPDOTransport::PRESERVE_KEYS => true,
+        xPDOTransport::UPDATE_OBJECT => true,
+        xPDOTransport::UNIQUE_KEY => 'text',
+        xPDOTransport::RELATED_OBJECTS => true,
+        xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array(
+            'Action' => array(
+                xPDOTransport::PRESERVE_KEYS => false,
+                xPDOTransport::UPDATE_OBJECT => true,
+                xPDOTransport::UNIQUE_KEY => array('namespace', 'controller'),
+            ),
+        ),
+    ));
+    $modx->log(modX::LOG_LEVEL_INFO, 'Adding in Menu & Action done.');
+    $builder->putVehicle($menuVehicle);
+    unset($menuVehicle, $menu);
+}
+
+/**
+ * SYSTEM SETTINGS
+ */
+$settings = include $sources['data'] . 'transport.settings.php';
+if (!is_array($settings)) {
+    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in settings.');
+} else {
+    $modx->log(modX::LOG_LEVEL_INFO, 'Packaging in System Settings...');
+    $settingAttributes = array(
+        xPDOTransport::UNIQUE_KEY => 'key',
+        xPDOTransport::PRESERVE_KEYS => true,
+        xPDOTransport::UPDATE_OBJECT => false,
+    );
+    foreach ($settings as $setting) {
+        $settingVehicle = $builder->createVehicle($setting, $settingAttributes);
+        $builder->putVehicle($settingVehicle);
+    }
+    $modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($settings) . ' System Settings done.');
+    unset($settingVehicle, $settings, $setting, $settingAttributes);
+}
+
+/**
+ * CATEGORY
+ */
 $category = $modx->newObject('modCategory');
 $category->set('id', 1);
 $category->set('category', 'ExerPlan');
 
-/* add snippets */
-$modx->log(modX::LOG_LEVEL_INFO, 'Adding in snippets.');
+/**
+ * SNIPPETS
+ */
 $snippets = include $sources['data'] . 'transport.snippets.php';
 if (is_array($snippets)) {
-	$category->addMany($snippets);
+    $modx->log(modX::LOG_LEVEL_INFO, 'Adding in snippets.');
+    $category->addMany($snippets);
+    $modx->log(modX::LOG_LEVEL_INFO, 'Adding in snippets done.');
 } else {
-	$modx->log(modX::LOG_LEVEL_FATAL, 'Adding snippets failed.');
+    $modx->log(modX::LOG_LEVEL_FATAL, 'Adding snippets failed.');
 }
 
-/* create category vehicle */
-$attr = array(
-	xPDOTransport::UNIQUE_KEY => 'category',
-	xPDOTransport::PRESERVE_KEYS => false,
-	xPDOTransport::UPDATE_OBJECT => true,
-	xPDOTransport::RELATED_OBJECTS => true,
-	xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array(
-		'Snippets' => array(
-			xPDOTransport::PRESERVE_KEYS => false,
-			xPDOTransport::UPDATE_OBJECT => true,
-			xPDOTransport::UNIQUE_KEY => 'name',
-		),
-	)
+$elementsAttribute = array(
+    xPDOTransport::UNIQUE_KEY => 'category',
+    xPDOTransport::PRESERVE_KEYS => false,
+    xPDOTransport::UPDATE_OBJECT => true,
+    xPDOTransport::RELATED_OBJECTS => true,
+    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array(
+        'Snippets' => array(
+            xPDOTransport::PRESERVE_KEYS => false,
+            xPDOTransport::UPDATE_OBJECT => true,
+            xPDOTransport::UNIQUE_KEY => 'name',
+        ),
+    )
 );
-$vehicle = $builder->createVehicle($category, $attr);
-$vehicle->resolve('file', array(
-	'source' => $sources['source_core'],
-	'target' => "return MODX_CORE_PATH . 'components/';",
+
+$elementsVehicle = $builder->createVehicle($category, $elementsAttribute);
+
+/**
+ * FILE RESOLVERS
+ */
+$modx->log(modX::LOG_LEVEL_INFO, 'Adding in files...');
+$elementsVehicle->resolve('file', array(
+    'source' => $sources['source_core'],
+    'target' => "return MODX_CORE_PATH . 'components/';",
 ));
-$vehicle->resolve('file', array(
-	'source' => $sources['source_assets'],
-	'target' => "return MODX_ASSETS_PATH . 'components/';",
+$elementsVehicle->resolve('file', array(
+    'source' => $sources['source_assets'],
+    'target' => "return MODX_ASSETS_PATH . 'components/';",
 ));
-$builder->putVehicle($vehicle);
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding in files done.');
-flush();
 
-/* load system settings */
-$settings = include $sources['data'] . 'transport.settings.php';
-if (!is_array($settings)) {
-	$modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in settings.');
-} else {
-	$attributes = array(
-		xPDOTransport::UNIQUE_KEY => 'key',
-		xPDOTransport::PRESERVE_KEYS => true,
-		xPDOTransport::UPDATE_OBJECT => false,
-	);
-	foreach ($settings as $setting) {
-		$vehicle = $builder->createVehicle($setting, $attributes);
-		$builder->putVehicle($vehicle);
-	}
-	$modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($settings) . ' System Settings.');
-}
-unset($settings, $setting, $attributes);
-
+/**
+ * RESOLVERS
+ */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding in PHP resolvers...');
-flush();
-$vehicle->resolve('php', array(
-	'source' => $sources['resolvers'] . 'tables.resolver.php',
+$elementsVehicle->resolve('php', array(
+    'source' => $sources['resolvers'] . 'tables.resolver.php',
 ));
-
-$builder->putVehicle($vehicle);
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding in PHP resolvers done.');
-flush();
 
+/**
+ * VALIDATORS
+ */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding in PHP validators...');
-flush();
-$vehicle->validate('php', array(
-    'source' => $sources['validators'] . 'options.validator.php',
+$elementsVehicle->validate('php', array(
+    'source' => $sources['validators'] . 'tables.validator.php',
 ));
-$builder->putVehicle($vehicle);
+$modx->log(modX::LOG_LEVEL_INFO, 'Adding in PHP validators done.');
 
-/******************************************************************************/
-$modx->log(modX::LOG_LEVEL_INFO, 'Adding in Default contents ...');
+$builder->putVehicle($elementsVehicle);
+unset($elementsVehicle);
+$modx->log(modX::LOG_LEVEL_INFO, 'Packaged in Elements done.');
 flush();
+
+/**
+ * PRE-MADE DATA
+ * *************************************************************************** */
+$modx->log(modX::LOG_LEVEL_INFO, 'Adding in Default contents ...');
 $modelPath = $modx->getOption('core_path') . 'components/exerplan/model/';
 $modelPath = realpath($modelPath) . DIRECTORY_SEPARATOR;
 $modx->addPackage('exerplan', $modelPath, 'modx_exerplan_');
-/******************************************************************************/
+/* * *************************************************************************** */
 $items = include $sources['data'] . 'transport.levels.php';
 if (!is_array($items)) {
-	$modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in levels.');
+    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in levels.');
 } else {
-	$attributes = array(
-		xPDOTransport::UNIQUE_KEY => 'level',
-		xPDOTransport::PRESERVE_KEYS => true,
-		xPDOTransport::UPDATE_OBJECT => false,
-	);
-	foreach ($items as $item) {
-		$vehicle = $builder->createVehicle($item, $attributes);
-		$builder->putVehicle($vehicle);
-	}
-	$modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($items) . ' levels.');
-	unset($items, $item, $attributes);
+    $dataAttributes = array(
+        xPDOTransport::UNIQUE_KEY => 'level',
+        xPDOTransport::PRESERVE_KEYS => true,
+        xPDOTransport::UPDATE_OBJECT => false,
+    );
+    foreach ($items as $item) {
+        $dataVehicle = $builder->createVehicle($item, $dataAttributes);
+        $builder->putVehicle($dataVehicle);
+    }
+    $modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($items) . ' levels.');
+    unset($dataVehicle, $items, $item, $dataAttributes);
 }
 $items = include $sources['data'] . 'transport.gallery.mediatypes.php';
 if (!is_array($items)) {
-	$modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in media types.');
+    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in media types.');
 } else {
-	$attributes = array(
-		xPDOTransport::UNIQUE_KEY => 'mediatype',
-		xPDOTransport::PRESERVE_KEYS => true,
-		xPDOTransport::UPDATE_OBJECT => false,
-	);
-	foreach ($items as $item) {
-		$vehicle = $builder->createVehicle($item, $attributes);
-		$builder->putVehicle($vehicle);
-	}
-	$modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($items) . ' media types.');
-	unset($items, $item, $attributes);
+    $dataAttributes = array(
+        xPDOTransport::UNIQUE_KEY => 'mediatype',
+        xPDOTransport::PRESERVE_KEYS => true,
+        xPDOTransport::UPDATE_OBJECT => false,
+    );
+    foreach ($items as $item) {
+        $dataVehicle = $builder->createVehicle($item, $dataAttributes);
+        $builder->putVehicle($dataVehicle);
+    }
+    $modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($items) . ' media types.');
+    unset($dataVehicle, $items, $item, $dataAttributes);
 }
 $items = include $sources['data'] . 'transport.gallery.sources.php';
 if (!is_array($items)) {
-	$modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in media sources.');
+    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in media sources.');
 } else {
-	$attributes = array(
-		xPDOTransport::UNIQUE_KEY => 'source',
-		xPDOTransport::PRESERVE_KEYS => true,
-		xPDOTransport::UPDATE_OBJECT => false,
-	);
-	foreach ($items as $item) {
-		$vehicle = $builder->createVehicle($item, $attributes);
-		$builder->putVehicle($vehicle);
-	}
-	$modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($items) . ' media sources.');
-	unset($items, $item, $attributes);
+    $dataAttributes = array(
+        xPDOTransport::UNIQUE_KEY => 'source',
+        xPDOTransport::PRESERVE_KEYS => true,
+        xPDOTransport::UPDATE_OBJECT => false,
+    );
+    foreach ($items as $item) {
+        $dataVehicle = $builder->createVehicle($item, $dataAttributes);
+        $builder->putVehicle($dataVehicle);
+    }
+    $modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($items) . ' media sources.');
+    unset($dataVehicle, $items, $item, $dataAttributes);
 }
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding in Default contents done.');
 flush();
-/******************************************************************************/
+/* * *************************************************************************** */
 
-$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in menu...');
-$menu = include $sources['data'] . 'transport.menu.php';
-if (empty($menu)) {
-	$modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in menu.');
-} else {
-	$vehicle = $builder->createVehicle($menu, array(
-		xPDOTransport::PRESERVE_KEYS => true,
-		xPDOTransport::UPDATE_OBJECT => true,
-		xPDOTransport::UNIQUE_KEY => 'text',
-		xPDOTransport::RELATED_OBJECTS => true,
-		xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array(
-			'Action' => array(
-				xPDOTransport::PRESERVE_KEYS => false,
-				xPDOTransport::UPDATE_OBJECT => true,
-				xPDOTransport::UNIQUE_KEY => array('namespace', 'controller'),
-			),
-		),
-	));
-	$modx->log(modX::LOG_LEVEL_INFO, 'Adding in PHP resolvers...');
-	$builder->putVehicle($vehicle);
-	unset($vehicle, $menu);
-}
-
-
-/* now pack in the license file, readme and setup options */
+/**
+ * license file, readme and setup options
+ */
 $builder->setPackageAttributes(array(
-	'license' => file_get_contents($sources['docs'] . 'license.txt'),
-	'readme' => file_get_contents($sources['docs'] . 'readme.txt'),
-	'changelog' => file_get_contents($sources['docs'] . 'changelog.txt'),
+    'license' => file_get_contents($sources['docs'] . 'license.txt'),
+    'readme' => file_get_contents($sources['docs'] . 'readme.txt'),
+    'changelog' => file_get_contents($sources['docs'] . 'changelog.txt'),
 ));
 
 $builder->pack();
@@ -243,6 +265,6 @@ $tend = $mtime;
 $totalTime = ($tend - $tstart);
 $totalTime = sprintf("%2.4f s", $totalTime);
 
-$modx->log(modX::LOG_LEVEL_INFO, "\n<br />" . PKG_NAME . " was package built.<br />\nExecution time: {$totalTime}\n");
+$modx->log(modX::LOG_LEVEL_INFO, "\n<br />" . PKG_NAME . " package was built.<br />\nExecution time: {$totalTime}\n");
 
 exit();
