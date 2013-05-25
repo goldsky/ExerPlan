@@ -28,19 +28,32 @@
 if ($modx = & $object->xpdo) {
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
-            $modx->log(modX::LOG_LEVEL_WARN, 'resolver xPDOTransport::ACTION_INSTALL');
+            if ($modx->getDebug()) {
+                $modx->log(modX::LOG_LEVEL_WARN, 'resolver xPDOTransport::ACTION_INSTALL');
+            }
             $modelPath = $modx->getOption('core_path') . 'components/exerplan/model/';
-            if (!$modx->addPackage('exerplan', $modelPath, 'modx_exerplan_')) {
-                $modx->log(modX::LOG_LEVEL_WARN, 'package could not be added in resolver xPDOTransport::ACTION_INSTALL');
-                return FALSE;
-            } else {
-                $modx->log(modX::LOG_LEVEL_WARN, 'package was added in resolver xPDOTransport::ACTION_INSTALL');
+            if ($modx->addPackage('exerplan', $modelPath, 'modx_exerplan_')) {
+                if ($modx->getDebug()) {
+                    $modx->log(modX::LOG_LEVEL_WARN, 'package was added in resolver xPDOTransport::ACTION_INSTALL');
+                }
                 $manager = $modx->getManager();
                 $manager->createObjectContainer('Assessments');
                 $manager->createObjectContainer('Galleries');
                 $manager->createObjectContainer('GalleryMediatypes');
+                $defaults = include $modx->getOption('core_path') . 'components/exerplan/defaults/defaults.gallery.mediatypes.php';
+                foreach ($defaults as $default) {
+                    $default->save();
+                }
                 $manager->createObjectContainer('GallerySources');
+                $defaults = include $modx->getOption('core_path') . 'components/exerplan/defaults/defaults.gallery.sources.php';
+                foreach ($defaults as $default) {
+                    $default->save();
+                }
                 $manager->createObjectContainer('Levels');
+                $defaults = include $modx->getOption('core_path') . 'components/exerplan/defaults/defaults.levels.php';
+                foreach ($defaults as $default) {
+                    $default->save();
+                }
                 $manager->createObjectContainer('UsergroupsWorkouts');
                 $manager->createObjectContainer('UsersWorkouts');
                 $manager->createObjectContainer('Workouts');
@@ -49,12 +62,12 @@ if ($modx = & $object->xpdo) {
         case xPDOTransport::ACTION_UPGRADE:
             break;
         case xPDOTransport::ACTION_UNINSTALL:
-            $modx->log(modX::LOG_LEVEL_WARN, 'resolver xPDOTransport::ACTION_UNINSTALL');
-            $modelPath = $modx->getOption('core_path') . 'components/exerplan/model/';
-            if (!$modx->addPackage('exerplan', $modelPath, 'modx_exerplan_')) {
-                $modx->log(modX::LOG_LEVEL_WARN, 'package could not be added in resolver xPDOTransport::ACTION_UNINSTALL');
-            } else {
-                $modx->log(modX::LOG_LEVEL_WARN, 'package was added in resolver xPDOTransport::ACTION_UNINSTALL');
+            if ($modx->getDebug()) {
+                $modx->log(modX::LOG_LEVEL_WARN, 'resolver xPDOTransport::ACTION_UNINSTALL');
+                $modelPath = $modx->getOption('core_path') . 'components/exerplan/model/';
+                if ($modx->addPackage('exerplan', $modelPath, 'modx_exerplan_')) {
+                    $modx->log(modX::LOG_LEVEL_WARN, 'package was added in resolver xPDOTransport::ACTION_UNINSTALL');
+                }
             }
             break;
     }

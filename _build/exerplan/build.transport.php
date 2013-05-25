@@ -189,62 +189,63 @@ flush();
 
 /**
  * PRE-MADE DATA
+ * @link http://forums.modx.com/thread/84694/uninstalling-package-with-default-data-went-failing#dis-post-467208 solved
  * *************************************************************************** */
-$modx->log(modX::LOG_LEVEL_INFO, 'Adding in Default contents ...');
-$modelPath = $modx->getOption('core_path') . 'components/exerplan/model/';
-$modelPath = realpath($modelPath) . DIRECTORY_SEPARATOR;
-$modx->addPackage('exerplan', $modelPath, 'modx_exerplan_');
+//$modx->log(modX::LOG_LEVEL_INFO, 'Adding in Default contents ...');
+//$modelPath = $modx->getOption('core_path') . 'components/exerplan/model/';
+//$modelPath = realpath($modelPath) . DIRECTORY_SEPARATOR;
+//$modx->addPackage('exerplan', $modelPath, 'modx_exerplan_');
 /* * *************************************************************************** */
-$items = include $sources['data'] . 'transport.levels.php';
-if (!is_array($items)) {
-    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in levels.');
-} else {
-    $dataAttributes = array(
-        xPDOTransport::UNIQUE_KEY => 'level',
-        xPDOTransport::PRESERVE_KEYS => true,
-        xPDOTransport::UPDATE_OBJECT => false,
-    );
-    foreach ($items as $item) {
-        $dataVehicle = $builder->createVehicle($item, $dataAttributes);
-        $builder->putVehicle($dataVehicle);
-    }
-    $modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($items) . ' levels.');
-    unset($dataVehicle, $items, $item, $dataAttributes);
-}
-$items = include $sources['data'] . 'transport.gallery.mediatypes.php';
-if (!is_array($items)) {
-    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in media types.');
-} else {
-    $dataAttributes = array(
-        xPDOTransport::UNIQUE_KEY => 'mediatype',
-        xPDOTransport::PRESERVE_KEYS => true,
-        xPDOTransport::UPDATE_OBJECT => false,
-    );
-    foreach ($items as $item) {
-        $dataVehicle = $builder->createVehicle($item, $dataAttributes);
-        $builder->putVehicle($dataVehicle);
-    }
-    $modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($items) . ' media types.');
-    unset($dataVehicle, $items, $item, $dataAttributes);
-}
-$items = include $sources['data'] . 'transport.gallery.sources.php';
-if (!is_array($items)) {
-    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in media sources.');
-} else {
-    $dataAttributes = array(
-        xPDOTransport::UNIQUE_KEY => 'source',
-        xPDOTransport::PRESERVE_KEYS => true,
-        xPDOTransport::UPDATE_OBJECT => false,
-    );
-    foreach ($items as $item) {
-        $dataVehicle = $builder->createVehicle($item, $dataAttributes);
-        $builder->putVehicle($dataVehicle);
-    }
-    $modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($items) . ' media sources.');
-    unset($dataVehicle, $items, $item, $dataAttributes);
-}
-$modx->log(modX::LOG_LEVEL_INFO, 'Adding in Default contents done.');
-flush();
+//$items = include $sources['data'] . 'transport.levels.php';
+//if (!is_array($items)) {
+//    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in levels.');
+//} else {
+//    $dataAttributes = array(
+//        xPDOTransport::UNIQUE_KEY => 'level',
+//        xPDOTransport::PRESERVE_KEYS => true,
+//        xPDOTransport::UPDATE_OBJECT => false,
+//    );
+//    foreach ($items as $item) {
+//        $dataVehicle = $builder->createVehicle($item, $dataAttributes);
+//        $builder->putVehicle($dataVehicle);
+//    }
+//    $modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($items) . ' levels.');
+//    unset($dataVehicle, $items, $item, $dataAttributes);
+//}
+//$items = include $sources['data'] . 'transport.gallery.mediatypes.php';
+//if (!is_array($items)) {
+//    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in media types.');
+//} else {
+//    $dataAttributes = array(
+//        xPDOTransport::UNIQUE_KEY => 'mediatype',
+//        xPDOTransport::PRESERVE_KEYS => true,
+//        xPDOTransport::UPDATE_OBJECT => false,
+//    );
+//    foreach ($items as $item) {
+//        $dataVehicle = $builder->createVehicle($item, $dataAttributes);
+//        $builder->putVehicle($dataVehicle);
+//    }
+//    $modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($items) . ' media types.');
+//    unset($dataVehicle, $items, $item, $dataAttributes);
+//}
+//$items = include $sources['data'] . 'transport.gallery.sources.php';
+//if (!is_array($items)) {
+//    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in media sources.');
+//} else {
+//    $dataAttributes = array(
+//        xPDOTransport::UNIQUE_KEY => 'source',
+//        xPDOTransport::PRESERVE_KEYS => true,
+//        xPDOTransport::UPDATE_OBJECT => false,
+//    );
+//    foreach ($items as $item) {
+//        $dataVehicle = $builder->createVehicle($item, $dataAttributes);
+//        $builder->putVehicle($dataVehicle);
+//    }
+//    $modx->log(modX::LOG_LEVEL_INFO, 'Packaged in ' . count($items) . ' media sources.');
+//    unset($dataVehicle, $items, $item, $dataAttributes);
+//}
+//$modx->log(modX::LOG_LEVEL_INFO, 'Adding in Default contents done.');
+//flush();
 /* * *************************************************************************** */
 
 /**

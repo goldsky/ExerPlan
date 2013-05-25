@@ -125,3 +125,4 @@ $_lang['exerplan.hidden'] = 'Hidden';
 $_lang['exerplan.assess_create'] = 'Create a New Assessment';
 $_lang['exerplan.assess_remove'] = 'Remove Workout';
 $_lang['exerplan.assess_remove_confirm'] = 'Are you sure you want to remove this assessment?';
+$_lang['exerplan.sort'] = 'Sort';

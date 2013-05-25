@@ -42,9 +42,11 @@ class ExerPlanHomeManagerController extends ExerPlanManagerController {
         $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/combo.workouts.js');
         $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/grid.workouts.usergroup.js');
         $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/grid.workouts.user.js');
+        $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/combo.levels.js');
+        $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/window.workout.js');
         $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/grid.workouts.js');
         $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/panel.workouts.grid.js');
-        $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/grid.levels.js');
+        $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/grid.setting.levels.js');
         $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/window.gallery.url.js');
         $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/grid.setting.gallery.mediatypes.js');
         $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/grid.setting.gallery.sources.js');

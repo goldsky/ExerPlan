@@ -28,23 +28,34 @@
 if ($modx = & $object->xpdo) {
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
-            $modx->log(modX::LOG_LEVEL_WARN, 'validator xPDOTransport::ACTION_INSTALL');
-            $modelPath = $modx->getOption('core_path') . 'components/exerplan/model/';
-            if (!$modx->addPackage('exerplan', $modelPath, 'modx_exerplan_')) {
-                $modx->log(modX::LOG_LEVEL_WARN, 'package could not be added in validator xPDOTransport::ACTION_INSTALL');
-            } else {
-                $modx->log(modX::LOG_LEVEL_WARN, 'package was added in validator xPDOTransport::ACTION_INSTALL');
+            if ($modx->getDebug()) {
+                $modx->log(modX::LOG_LEVEL_WARN, 'validator xPDOTransport::ACTION_INSTALL');
+                $modelPath = $modx->getOption('core_path') . 'components/exerplan/model/';
+                if ($modx->addPackage('exerplan', $modelPath, 'modx_exerplan_')) {
+                    $modx->log(modX::LOG_LEVEL_WARN, 'package was added in validator xPDOTransport::ACTION_INSTALL');
+                }
             }
             break;
         case xPDOTransport::ACTION_UPGRADE:
             break;
         case xPDOTransport::ACTION_UNINSTALL:
-            $modx->log(modX::LOG_LEVEL_WARN, 'validator xPDOTransport::ACTION_UNINSTALL');
+            if ($modx->getDebug()) {
+                $modx->log(modX::LOG_LEVEL_WARN, 'validator xPDOTransport::ACTION_UNINSTALL');
+            }
             $modelPath = $modx->getOption('core_path') . 'components/exerplan/model/';
-            if (!$modx->addPackage('exerplan', $modelPath, 'modx_exerplan_')) {
-                $modx->log(modX::LOG_LEVEL_WARN, 'package could not be added in validator xPDOTransport::ACTION_UNINSTALL');
-            } else {
-                $modx->log(modX::LOG_LEVEL_WARN, 'package was added in validator xPDOTransport::ACTION_UNINSTALL');
+            if ($modx->addPackage('exerplan', $modelPath, 'modx_exerplan_')) {
+                if ($modx->getDebug()) {
+                    $modx->log(modX::LOG_LEVEL_WARN, 'package was added in validator xPDOTransport::ACTION_UNINSTALL');
+                }
+                $manager = $modx->getManager();
+                $manager->removeObjectContainer('Assessments');
+                $manager->removeObjectContainer('Galleries');
+                $manager->removeObjectContainer('GalleryMediatypes');
+                $manager->removeObjectContainer('GallerySources');
+                $manager->removeObjectContainer('Levels');
+                $manager->removeObjectContainer('UsergroupsWorkouts');
+                $manager->removeObjectContainer('UsersWorkouts');
+                $manager->removeObjectContainer('Workouts');
             }
             break;
     }

@@ -21,17 +21,18 @@
  * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package exerplan
- * @subpackage processor
+ * @subpackage build
  */
 
-class LevelsGetListProccessor extends modObjectGetListProcessor {
-
-    public $classKey = 'Levels';
-    public $languageTopics = array('exerplan:cmp');
-    public $defaultSortField = 'sort,id';
-    public $defaultSortDirection = 'ASC';
-    public $objectType = 'exerplan.LevelsGetList';
-
+$collection = array();
+$items = include $sources['data'] . 'modx_exerplan_levels.php';
+foreach ($items as $item) {
+	$newObject = $modx->newObject('Levels');
+	$newObject->fromArray(array(
+		'level' => $item['level'],
+		'description' => $item['description'],
+		'sort' => $item['sort'],
+			), '', true, true);
+	$collection[$item['level']] = $newObject;
 }
-
-return 'LevelsGetListProccessor';
+return $collection;

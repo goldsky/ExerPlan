@@ -21,17 +21,18 @@
  * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package exerplan
- * @subpackage processor
+ * @subpackage build
  */
 
-class LevelsGetListProccessor extends modObjectGetListProcessor {
-
-    public $classKey = 'Levels';
-    public $languageTopics = array('exerplan:cmp');
-    public $defaultSortField = 'sort,id';
-    public $defaultSortDirection = 'ASC';
-    public $objectType = 'exerplan.LevelsGetList';
-
+$collection = array();
+$items = include $sources['data'] . 'modx_exerplan_gallery_mediatypes.php';
+foreach ($items as $item) {
+	$newObject = $modx->newObject('GalleryMediatypes');
+	$newObject->fromArray(array(
+		'mediatype' => $item['mediatype'],
+		'description' => $item['description'],
+		'file_extensions' => $item['file_extensions'],
+			), '', true, true);
+	$collection[$item['mediatype']] = $newObject;
 }
-
-return 'LevelsGetListProccessor';
+return $collection;

@@ -106,7 +106,7 @@ ExerPlan.panel.Home = function(config) {
                                     {
                                         html: '<h3>' + _('exerplan.difficulty_levels') + '</h3>'
                                     }, {
-                                        xtype: 'exerplan-grid-levels'
+                                        xtype: 'exerplan-grid-setting-levels'
                                     }, {
                                         autoEl: {
                                             tag: 'br'
