@@ -1,4 +1,4 @@
-ExerPlan.grid.UserAssessments = function(config) {
+ExerPlan.grid.UserAssessments = function (config) {
     config = config || {};
 
     Ext.applyIf(config, {
@@ -39,7 +39,7 @@ ExerPlan.grid.UserAssessments = function(config) {
                 dataIndex: 'is_hidden',
                 width: 30,
                 sortable: false,
-                processEvent: function(name, e, grid, rowIndex, colIndex) {
+                processEvent: function (name, e, grid, rowIndex, colIndex) {
                     if (name === 'mousedown') {
                         var record = grid.store.getAt(rowIndex);
                         record.set(this.dataIndex, !record.data[this.dataIndex]);
@@ -51,7 +51,7 @@ ExerPlan.grid.UserAssessments = function(config) {
                             },
                             listeners: {
                                 'success': {
-                                    fn: function() {
+                                    fn: function () {
                                         Ext.getCmp('exerplan-grid-user-assessments').refresh();
                                     }
                                 }
@@ -66,14 +66,7 @@ ExerPlan.grid.UserAssessments = function(config) {
         ],
         tbar: [{
                 text: _('exerplan.assess_create'),
-                handler: {
-                    xtype: 'exerplan-window-assessment',
-                    baseParams: {
-                        action: 'mgr/assessments/create',
-                        created_for: config.node.attributes.uid
-                    },
-                    blankValues: true
-                }
+                handler: this.newAssessment
             }
         ]
     });
@@ -82,7 +75,7 @@ ExerPlan.grid.UserAssessments = function(config) {
 };
 
 Ext.extend(ExerPlan.grid.UserAssessments, MODx.grid.Grid, {
-    getMenu: function() {
+    getMenu: function () {
         return [{
                 text: _('exerplan.update'),
                 handler: this.updateAssessment
@@ -91,28 +84,47 @@ Ext.extend(ExerPlan.grid.UserAssessments, MODx.grid.Grid, {
                 handler: this.removeAssessment
             }];
     },
-    updateAssessment: function(btn, e) {
-        if (!this.updateAssessmentWindow) {
-            this.updateAssessmentWindow = MODx.load({
-                xtype: 'exerplan-window-assessment',
-                title: _('exerplan.update'),
-                baseParams: {
-                    action: 'mgr/assessments/update',
-                    id: this.menu.record.id
-                },
-                listeners: {
-                    'success': {
-                        fn: this.refresh,
-                        scope: this
-                    }
+    updateAssessment: function (btn, e) {
+        var assessmentWindow = MODx.load({
+            xtype: 'exerplan-window-assessment',
+            title: _('exerplan.update'),
+            baseParams: {
+                action: 'mgr/assessments/update',
+                id: this.menu.record.id
+            },
+            listeners: {
+                'success': {
+                    fn: this.refresh,
+                    scope: this
                 }
-            });
-        }
+            }
+        });
 
-        this.updateAssessmentWindow.setValues(this.menu.record);
-        this.updateAssessmentWindow.show(e.target);
+        assessmentWindow.reset();
+        assessmentWindow.setValues(this.menu.record);
+        assessmentWindow.show(e.target);
     },
-    removeAssessment: function() {
+    newAssessment: function (btn, e) {
+        var assessmentWindow = MODx.load({
+            xtype: 'exerplan-window-assessment',
+            title: _('exerplan.assess_create'),
+            baseParams: {
+                action: 'mgr/assessments/create',
+                created_for: this.config.node.attributes.uid
+            },
+            blankValues: true,
+            listeners: {
+                'success': {
+                    fn: this.refresh,
+                    scope: this
+                }
+            }
+        });
+
+        assessmentWindow.reset();
+        assessmentWindow.show(e.target);
+    },
+    removeAssessment: function () {
         MODx.msg.confirm({
             title: _('exerplan.assess_remove'),
             text: _('exerplan.assess_remove_confirm'),
@@ -133,7 +145,7 @@ Ext.extend(ExerPlan.grid.UserAssessments, MODx.grid.Grid, {
 Ext.reg('exerplan-grid-user-assessments', ExerPlan.grid.UserAssessments);
 
 
-ExerPlan.window.Assessment = function(config) {
+ExerPlan.window.Assessment = function (config) {
     config = config || {};
 
     Ext.applyIf(config, {
@@ -157,7 +169,6 @@ ExerPlan.window.Assessment = function(config) {
                 xtype: 'textarea',
                 fieldLabel: _('exerplan.assessment'),
                 name: 'assessment',
-                id: 'exerplan-assessment-textarea',
                 height: 400,
                 anchor: '100%'
             }, {
@@ -168,8 +179,10 @@ ExerPlan.window.Assessment = function(config) {
     });
 
     ExerPlan.window.Assessment.superclass.constructor.call(this, config);
-    this.on('show', function(cmp){
-        MODx.loadRTE('exerplan-assessment-textarea');
+    var _this = this;
+    this.on('show', function (cmp) {
+        var textarea = _this.fp.getForm().findField("assessment");
+        MODx.loadRTE(textarea.getId());
     });
 };
 Ext.extend(ExerPlan.window.Assessment, MODx.Window);

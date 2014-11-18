@@ -1,5 +1,9 @@
 Changelog for ExerPlan
 
+ExerPlan 1.0.3-pl (November 19, 2014)
+======================================
++ fix tinyMCE on Assessment's textarea
+
 ExerPlan 1.0.2-pl (November 7, 2014)
 ======================================
 + use tinyMCE on Assessment's textarea
