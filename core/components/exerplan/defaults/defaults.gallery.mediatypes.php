@@ -25,14 +25,19 @@
  */
 
 $collection = array();
-$items = include $sources['data'] . 'modx_exerplan_gallery_mediatypes.php';
+$items = include dirname(__FILE__) . '/modx_exerplan_gallery_mediatypes.php';
 foreach ($items as $item) {
-	$newObject = $modx->newObject('GalleryMediatypes');
-	$newObject->fromArray(array(
-		'mediatype' => $item['mediatype'],
-		'description' => $item['description'],
-		'file_extensions' => $item['file_extensions'],
-			), '', true, true);
-	$collection[$item['mediatype']] = $newObject;
+	$check = $modx->getObject('GalleryMediatypes', array(
+        'mediatype' => $item['mediatype'],
+    ));
+    if (!$check) {
+        $newObject = $modx->newObject('GalleryMediatypes');
+        $newObject->fromArray(array(
+            'mediatype' => $item['mediatype'],
+            'description' => $item['description'],
+            'file_extensions' => $item['file_extensions'],
+                ), '', true, true);
+        $collection[$item['mediatype']] = $newObject;
+    }
 }
 return $collection;

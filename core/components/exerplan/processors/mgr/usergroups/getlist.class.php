@@ -31,6 +31,23 @@ class UsergroupsGetListProccessor extends modObjectGetListProcessor {
     public $objectType = 'exerplan.UsergroupsGetList';
 
     /**
+     * {@inheritDoc}
+     * @return boolean
+     */
+    public function initialize() {
+        $this->setDefaultProperties(array(
+            'start' => 0,
+//            'limit' => 20,
+            'limit' => 0,
+            'sort' => $this->defaultSortField,
+            'dir' => $this->defaultSortDirection,
+            'combo' => false,
+            'query' => '',
+        ));
+        return true;
+    }
+
+    /**
      * Prepare the row for iteration
      * @param xPDOObject $object
      * @return array

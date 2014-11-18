@@ -26,10 +26,24 @@
 
 class ExerPlan {
 
-    const version = '1.0.0.pl';
+    const VERSION = '1.0.2';
+    const RELEASE = 'pl';
 
+    /**
+     * modX object
+     * @var object
+     */
     public $modx;
+    /**
+     * $scriptProperties
+     * @var array
+     */
     public $config;
+    /**
+     * store the chunk's HTML to property to save memory of loop rendering
+     * @var array
+     */
+    private $_chunks = array();
 
     /**
      * constructor
@@ -42,7 +56,7 @@ class ExerPlan {
         $basePath = $this->modx->getOption('exerplan.core_path', $config, $this->modx->getOption('core_path') . 'components/exerplan/');
         $assetsUrl = $this->modx->getOption('exerplan.assets_url', $config, $this->modx->getOption('assets_url') . 'components/exerplan/');
         $this->config = array_merge(array(
-            'version' => self::version,
+            'version' => self::VERSION . '-' . self::RELEASE,
             'basePath' => $basePath,
             'corePath' => $basePath,
             'modelPath' => $basePath . 'model/',
@@ -56,7 +70,8 @@ class ExerPlan {
                 ), $config);
 
         $this->modx->lexicon->load('exerplan:default');
-        $this->modx->addPackage('exerplan', $this->config['modelPath'], 'modx_exerplan_');
+        $tablePrefix = $this->modx->getOption('exerplan.table_prefix', null, $this->modx->config[modX::OPT_TABLE_PREFIX] . 'exerplan_');
+        $this->modx->addPackage('exerplan', $this->config['modelPath'], $tablePrefix);
     }
 
     /**
@@ -85,11 +100,17 @@ class ExerPlan {
      */
     public function parseTpl($tpl, array $phs = array()) {
         $output = '';
+
+        if (isset($this->_chunks[$tpl]) && !empty($this->_chunks[$tpl])) {
+            return $this->parseTplCode($this->_chunks[$tpl], $phs);
+        }
+
         if (preg_match('/^(@CODE|@INLINE)/i', $tpl)) {
             $tplString = preg_replace('/^(@CODE|@INLINE)/i', '', $tpl);
             // tricks @CODE: / @INLINE:
             $tplString = ltrim($tplString, ':');
             $tplString = trim($tplString);
+            $this->_chunks[$tpl] = $tplString;
             $output = $this->parseTplCode($tplString, $phs);
         } elseif (preg_match('/^@FILE/i', $tpl)) {
             $tplFile = preg_replace('/^@FILE/i', '', $tpl);
@@ -121,11 +142,12 @@ class ExerPlan {
                     return 'Chunk: ' . $tplChunk . ' is not found, neither the file ' . $output;
                 }
             } else {
-//                $output = $this->modx->getChunk($tpl, $phs);
+//                $output = $this->modx->getChunk($tplChunk, $phs);
                 /**
                  * @link    http://forums.modx.com/thread/74071/help-with-getchunk-and-modx-speed-please?page=4#dis-post-464137
                  */
-                $chunk = $this->modx->getParser()->getElement('modChunk', $tpl);
+                $chunk = $this->modx->getParser()->getElement('modChunk', $tplChunk);
+                $this->_chunks[$tpl] = $chunk->get('content');
                 $chunk->setCacheable(false);
                 $chunk->_processed = false;
                 $output = $chunk->process($phs);
@@ -162,6 +184,7 @@ class ExerPlan {
             throw new Exception('File: ' . $file . ' is not found.');
         }
         $o = file_get_contents($file);
+        $this->_chunks[$file] = $o;
         $chunk = $this->modx->newObject('modChunk');
 
         // just to create a name for the modChunk object.

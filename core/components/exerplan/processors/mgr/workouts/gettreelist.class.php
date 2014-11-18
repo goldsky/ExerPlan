@@ -24,13 +24,30 @@
  * @subpackage processor
  */
 
-class WorkoutsGeTreetListProccessor extends modObjectGetListProcessor {
+class WorkoutsGetTreeListProccessor extends modObjectGetListProcessor {
 
     public $classKey = 'Workouts';
     public $languageTopics = array('exerplan:cmp');
     public $defaultSortField = 'id';
     public $defaultSortDirection = 'ASC';
-    public $objectType = 'exerplan.WorkoutsGeTreetList';
+    public $objectType = 'exerplan.WorkoutsGetTreeList';
+
+    /**
+     * {@inheritDoc}
+     * @return boolean
+     */
+    public function initialize() {
+        $this->setDefaultProperties(array(
+            'start' => 0,
+//            'limit' => 20,
+            'limit' => 0,
+            'sort' => $this->defaultSortField,
+            'dir' => $this->defaultSortDirection,
+            'combo' => false,
+            'query' => '',
+        ));
+        return true;
+    }
 
     /**
      * Prepare the row for iteration
@@ -49,4 +66,4 @@ class WorkoutsGeTreetListProccessor extends modObjectGetListProcessor {
 
 }
 
-return 'WorkoutsGeTreetListProccessor';
+return 'WorkoutsGetTreeListProccessor';

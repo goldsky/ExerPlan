@@ -1,15 +1,25 @@
 Changelog for ExerPlan
 
-ExerPlan 1.0.0.pl (May 24th, 2013)
+ExerPlan 1.0.2-pl (November 7, 2014)
+======================================
++ use tinyMCE on Assessment's textarea
+
+ExerPlan 1.0.1-pl (September 19, 2013)
+======================================
++ fixed default contents installment if they exist
++ fixed the query limit to the tree widgets
++ fixed scrolls to the overflow panels
+
+ExerPlan 1.0.0-pl (May 24, 2013)
 ====================================
 + public release
 
-ExerPlan 0.0.1.dev.2 (May 22nd, 2013)
+ExerPlan 0.0.1-dev2 (May 22, 2013)
 ====================================
 + Renamed the namespace
 + Added Gallery tab for the user
 + Refined the window of the gallery adding
 
-ExerPlan 0.0.1.dev.1 (May 16th, 2013)
+ExerPlan 0.0.1-dev1 (May 16, 2013)
 ====================================
 + Initial commit

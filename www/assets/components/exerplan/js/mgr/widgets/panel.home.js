@@ -8,9 +8,9 @@ ExerPlan.panel.Home = function(config) {
         layout: 'border',
         defaults: {
             collapsible: false,
-            bodyStyle: 'padding: 15px',
             border: false,
-            autoHeight: true
+            autoHeight: true,
+            bodyStyle: 'margin-bottom: 30px;'
         },
         bodyStyle: 'min-height: 500px;',
         items: [
@@ -50,7 +50,8 @@ ExerPlan.panel.Home = function(config) {
                                     bodyStyle: 'overflow: auto;',
                                     border: false
                                 },
-                                items: [{
+                                items: [
+                                    {
                                         xtype: 'exerplan-tree-users',
                                         id: 'exerplan-tree-users',
                                         bodyStyle: 'padding: 5px;',
@@ -74,10 +75,12 @@ ExerPlan.panel.Home = function(config) {
                         title: _('exerplan.workouts'),
                         id: 'exerplan-workouts',
                         activeTab: 1,
+//                        layout: 'fit',
                         defaults: {
                             border: false,
                             autoHeight: true
                         },
+                        bodyStyle: 'margin: 10px',
                         items: [
                             {
 //                                xtype: 'exerplan-panel-workouts-galleries',
@@ -101,7 +104,7 @@ ExerPlan.panel.Home = function(config) {
                                     border: false,
                                     preventRender: true
                                 },
-                                bodyStyle: 'min-height:600px;',
+                                bodyStyle: 'min-height:600px; margin: 10px;',
                                 items: [
                                     {
                                         html: '<h3>' + _('exerplan.difficulty_levels') + '</h3>'

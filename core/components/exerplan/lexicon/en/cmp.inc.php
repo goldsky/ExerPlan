@@ -126,3 +126,4 @@ $_lang['exerplan.assess_create'] = 'Create a New Assessment';
 $_lang['exerplan.assess_remove'] = 'Remove Workout';
 $_lang['exerplan.assess_remove_confirm'] = 'Are you sure you want to remove this assessment?';
 $_lang['exerplan.sort'] = 'Sort';
+$_lang['exerplan.gallery_err_ae'] = 'This gallery already exists.';

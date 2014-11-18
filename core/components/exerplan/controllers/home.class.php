@@ -63,6 +63,40 @@ class ExerPlanHomeManagerController extends ExerPlanManagerController {
         $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/tree.users.js');
         $this->addJavascript($this->exerplan->config['jsUrl'] . 'mgr/widgets/panel.home.js');
         $this->addLastJavascript($this->exerplan->config['jsUrl'] . 'mgr/sections/index.js');
+        
+        /* load RTE */
+        $this->loadRichTextEditor();
+    }
+
+    /**
+     * Initialize a RichText Editor, if set
+     *
+     * @return void
+     */
+    public function loadRichTextEditor() {
+        /* register JS scripts */
+        $rte = isset($this->scriptProperties['which_editor']) ? $this->scriptProperties['which_editor'] : $this->modx->context->getOption('which_editor', '', $this->modx->_userConfig);
+        
+        $this->setPlaceholder('which_editor', $rte);
+        /* Set which RTE if not core */
+        if ($this->modx->context->getOption('use_editor', false, $this->modx->_userConfig) && !empty($rte)) {
+            /* invoke OnRichTextEditorRegister event */
+            $textEditors = $this->modx->invokeEvent('OnRichTextEditorRegister');
+            $this->setPlaceholder('text_editors', $textEditors);
+
+            $this->rteFields = array('exerplan-assessment-textarea');
+            $this->setPlaceholder('replace_richtexteditor', $this->rteFields);
+
+            /* invoke OnRichTextEditorInit event */
+            $onRichTextEditorInit = $this->modx->invokeEvent('OnRichTextEditorInit', array(
+                'editor' => $rte,
+                'elements' => $this->rteFields,
+            ));
+            if (is_array($onRichTextEditorInit)) {
+                $onRichTextEditorInit = implode('', $onRichTextEditorInit);
+                $this->setPlaceholder('onRichTextEditorInit', $onRichTextEditorInit);
+            }
+        }
     }
 
     public function getTemplateFile() {

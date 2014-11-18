@@ -1,13 +1,11 @@
 ExerPlan.window.Workout = function(config) {
     config = config || {};
 
-    console.log('config', config);
-
     Ext.applyIf(config, {
         url: ExerPlan.config.connectorUrl,
         width: 600,
-        preventRender: false,
-        fields: [{
+        fields: [
+            {
                 xtype: 'hidden',
                 name: 'id'
             }, {
@@ -27,7 +25,8 @@ ExerPlan.window.Workout = function(config) {
                                 xtype: 'textfield',
                                 fieldLabel: _('exerplan.name'),
                                 name: 'name',
-                                anchor: '100%'
+                                anchor: '100%',
+                                allowBlank: false
                             }, {
                                 xtype: 'textarea',
                                 fieldLabel: _('exerplan.description'),
@@ -40,7 +39,8 @@ ExerPlan.window.Workout = function(config) {
                                 anchor: '100%'
                             }, {
                                 fieldLabel: _('exerplan.difficulty_level'),
-                                xtype: 'exerplan-combo-levels'
+                                xtype: 'exerplan-combo-levels',
+                                allowBlank: false
                             }
                         ]
                     }, {
@@ -118,16 +118,16 @@ ExerPlan.window.Workout = function(config) {
                                         name: 'sun'
                                     }
                                 ],
-								listeners: {
-									'render': {
-										fn: function() {
-											// for initial loading
-											if (this.record)
-												this.setValues(this.record);
-										},
+                                listeners: {
+                                    'render': {
+                                        fn: function() {
+                                            // for initial loading
+                                            if (this.record)
+                                                this.setValues(this.record);
+                                        },
                                         scope: this
-									}
-								}
+                                    }
+                                }
                             }, {
                                 layout: 'column',
                                 columns: 3,

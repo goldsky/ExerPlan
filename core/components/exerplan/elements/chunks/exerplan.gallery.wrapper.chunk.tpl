@@ -1,3 +1,3 @@
-<div id="exerplan-exercise-gallery-wrapper-[[+exerplan.gallery.id]]">
+<div id="exerplan-exercise-gallery-wrapper">
     [[+exerplan.gallery.items]]
 </div>

@@ -18,7 +18,6 @@ ExerPlan.grid.Workouts = function(config) {
         autoExpandColumn: 'description',
         save_action: 'mgr/workouts/updateFromGrid',
         autosave: true,
-        bodyStyle: 'overflow: auto;',
         columns: [
             {
                 header: _('id'),

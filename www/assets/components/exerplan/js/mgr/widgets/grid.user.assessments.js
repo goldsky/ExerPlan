@@ -139,19 +139,27 @@ ExerPlan.window.Assessment = function(config) {
     Ext.applyIf(config, {
         title: _('exerplan.assess_create'),
         url: ExerPlan.config.connectorUrl,
+        width: 700,
         fields: [
             {
                 xtype: 'hidden',
                 name: 'id'
             }, {
-                xtype: 'htmleditor',
+//                xtype: 'htmleditor',
+//                fieldLabel: _('exerplan.assessment'),
+//                name: 'assessment',
+//                anchor: '100%',
+//                enableAlignments: false,
+//                enableColors: false,
+//                enableFont: false,
+//                enableFontSize: false
+//            }, {
+                xtype: 'textarea',
                 fieldLabel: _('exerplan.assessment'),
                 name: 'assessment',
-                anchor: '100%',
-                enableAlignments: false,
-                enableColors: false,
-                enableFont: false,
-                enableFontSize: false
+                id: 'exerplan-assessment-textarea',
+                height: 400,
+                anchor: '100%'
             }, {
                 xtype: 'xcheckbox',
                 boxLabel: _('exerplan.hidden'),
@@ -160,6 +168,9 @@ ExerPlan.window.Assessment = function(config) {
     });
 
     ExerPlan.window.Assessment.superclass.constructor.call(this, config);
+    this.on('show', function(cmp){
+        MODx.loadRTE('exerplan-assessment-textarea');
+    });
 };
 Ext.extend(ExerPlan.window.Assessment, MODx.Window);
 Ext.reg('exerplan-window-assessment', ExerPlan.window.Assessment);

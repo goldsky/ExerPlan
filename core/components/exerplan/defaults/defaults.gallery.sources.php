@@ -25,16 +25,21 @@
  */
 
 $collection = array();
-$items = include $sources['data'] . 'modx_exerplan_gallery_sources.php';
+$items = include dirname(__FILE__) . '/modx_exerplan_gallery_sources.php';
 foreach ($items as $item) {
-	$newObject = $modx->newObject('GallerySources');
-	$newObject->fromArray(array(
-		'source' => $item['source'],
-		'mediatype_id' => $item['mediatype_id'],
-		'description' => $item['description'],
-		'data' => $item['data'],
-		'controller' => $item['controller'],
-			), '', true, true);
-	$collection[$item['source']] = $newObject;
+	$check = $modx->getObject('GallerySources', array(
+        'source' => $item['source'],
+    ));
+    if (!$check) {
+        $newObject = $modx->newObject('GallerySources');
+        $newObject->fromArray(array(
+            'source' => $item['source'],
+            'mediatype_id' => $item['mediatype_id'],
+            'description' => $item['description'],
+            'data' => $item['data'],
+            'controller' => $item['controller'],
+                ), '', true, true);
+        $collection[$item['source']] = $newObject;
+    }
 }
 return $collection;

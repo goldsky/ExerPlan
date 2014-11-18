@@ -5,7 +5,6 @@ ExerPlan.panel.WorkoutsGalleries = function(config) {
         id: 'exerplan-panel-workouts-galleries',
         baseCls: 'modx-formpanel',
         cls: 'container',
-        layout: 'border',
         defaults: {
             collapsible: false,
             bodyStyle: 'padding: 15px',
@@ -15,21 +14,19 @@ ExerPlan.panel.WorkoutsGalleries = function(config) {
         bodyStyle: 'min-height: 600px;',
         items: [
             {
-                region: 'north',
                 html: '<p>' + _('exerplan.manage_galleries_desc') + '</p>',
                 bodyCssClass: 'panel-desc'
             }, {
-                region: 'center',
                 layout: 'border',
                 bodyStyle: 'min-height:600px;',
                 autoHeight: true,
                 defaults: {
                     collapsible: false,
                     split: true,
-                    bodyStyle: 'overflow: auto;',
                     border: false
                 },
-                items: [{
+                items: [
+                    {
                         xtype: 'exerplan-tree-workouts',
                         region: 'west',
                         id: 'exerplan-tree-workouts',
@@ -70,7 +67,7 @@ ExerPlan.panel.WorkoutsGalleries = function(config) {
                     }, {
                         region: 'center',
                         xtype: 'exerplan-panel-galleries-content',
-                        bodyStyle: 'overflow: auto;',
+                        bodyStyle: 'overflow-y: scroll;',
                         preventRender: true
                     }
                 ]
@@ -82,7 +79,8 @@ ExerPlan.panel.WorkoutsGalleries = function(config) {
     var workoutsHandler = Ext.getCmp('exerplan-workouts');
     workoutsHandler.removeAll(true);
     workoutsHandler.add(this);
-    workoutsHandler.doLayout();
+    var container = Ext.getCmp('modx-content');
+    container.doLayout();
 
 };
 

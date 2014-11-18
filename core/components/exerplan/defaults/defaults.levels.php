@@ -25,14 +25,19 @@
  */
 
 $collection = array();
-$items = include $sources['data'] . 'modx_exerplan_levels.php';
+$items = include dirname(__FILE__) . '/modx_exerplan_levels.php';
 foreach ($items as $item) {
-	$newObject = $modx->newObject('Levels');
-	$newObject->fromArray(array(
-		'level' => $item['level'],
-		'description' => $item['description'],
-		'sort' => $item['sort'],
-			), '', true, true);
-	$collection[$item['level']] = $newObject;
+	$check = $modx->getObject('Levels', array(
+        'level' => $item['level'],
+    ));
+    if (!$check) {
+        $newObject = $modx->newObject('Levels');
+        $newObject->fromArray(array(
+            'level' => $item['level'],
+            'description' => $item['description'],
+            'sort' => $item['sort'],
+                ), '', true, true);
+        $collection[$item['level']] = $newObject;
+    }
 }
 return $collection;

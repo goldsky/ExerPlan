@@ -5,21 +5,17 @@ ExerPlan.panel.WorkoutsGrid = function(config) {
         id: 'exerplan-panel-workouts-grid',
         baseCls: 'modx-formpanel',
         cls: 'container',
-        layout: 'border',
         defaults: {
             collapsible: false,
             bodyStyle: 'padding: 15px',
             border: false,
             autoHeight: true
         },
-        bodyStyle: 'min-height: 600px;',
         items: [
             {
-                region: 'north',
                 html: '<p>' + _('exerplan.workouts_desc') + '</p>',
                 bodyCssClass: 'panel-desc'
             }, {
-                region: 'center',
                 xtype: 'exerplan-grid-workouts',
                 preventRender: true
             }
@@ -28,9 +24,10 @@ ExerPlan.panel.WorkoutsGrid = function(config) {
     ExerPlan.panel.WorkoutsGrid.superclass.constructor.call(this, config);
 
     var workoutsHandler = Ext.getCmp('exerplan-workouts');
-    workoutsHandler.removeAll();
+    workoutsHandler.removeAll(true);
     workoutsHandler.add(this);
-    workoutsHandler.doLayout();
+    var container = Ext.getCmp('modx-content');
+    container.doLayout();
 
 };
 

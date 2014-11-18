@@ -58,12 +58,14 @@ ExerPlan.window.galleryUrl = function(config) {
                                 xtype: 'textfield',
                                 fieldLabel: _('exerplan.url'),
                                 name: 'url',
-                                anchor: '100%'
+                                anchor: '100%',
+                                allowBlank: false
                             }, {
                                 xtype: 'textfield',
                                 fieldLabel: _('exerplan.name'),
                                 name: 'name',
-                                anchor: '100%'
+                                anchor: '100%',
+                                allowBlank: false
                             }, {
                                 xtype: 'textarea',
                                 fieldLabel: _('exerplan.description'),
